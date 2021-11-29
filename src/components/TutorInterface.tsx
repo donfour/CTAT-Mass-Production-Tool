@@ -10,7 +10,21 @@ interface TutorInterfaceProps {
 
 function stitchHtmlAndCss(html: string, css: string) {
   const [head, rest] = html.split("</head>");
-  return `${head}<style>${css}</style></head>${rest}`;
+  return `
+    ${head}
+    <style>
+      ${css}
+      .active {
+        border: 2px solid blue;
+      }
+    </style>
+    </head>
+    ${rest}`;
+}
+
+function getBlobURL(code: string , type: string) {
+  const blob = new Blob([code], { type })
+  return URL.createObjectURL(blob)
 }
 
 function TutorInterface (props: TutorInterfaceProps) {
@@ -22,7 +36,13 @@ function TutorInterface (props: TutorInterfaceProps) {
     <>
       {
         css && html ? (
-          <div dangerouslySetInnerHTML={{__html: stitchHtmlAndCss(html, css)}} />
+          <iframe
+            id="tutor"
+            title="tutor interface"
+            sandbox="allow-same-origin"
+            className="h-full w-full"
+            src={getBlobURL(stitchHtmlAndCss(html, css), 'text/html')}
+          />
         ) : (
           <>
             <p>Upload HTML:</p>

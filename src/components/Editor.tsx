@@ -8,13 +8,17 @@ interface EditorProps {
 
 function onMouseEnter (id?: string) {
   if(id){
-    document?.getElementById(id)?.classList?.add('active');
+    const iframe = document.getElementById("tutor");
+    // @ts-ignore
+    iframe?.contentWindow?.document?.getElementById(id)?.classList?.add('active');
   }
 }
 
 function onMouseLeave (id?: string) {
   if(id){
-    document?.getElementById(id)?.classList?.remove('active');
+    const iframe = document.getElementById("tutor");
+    // @ts-ignore
+    iframe?.contentWindow?.document?.getElementById(id)?.classList?.remove('active');
   }
 }
 
@@ -44,6 +48,7 @@ function Editor (props: EditorProps) {
                 const {buggyMessage, hintMessage, successMessage} = edge?.actionLabel || {};
                 return (
                   <tr
+                    key={uniqueID}
                     onMouseEnter={() => onMouseEnter(properties?.Selection?.value)}
                     onMouseLeave={() => onMouseLeave(properties?.Selection?.value)}
                   >

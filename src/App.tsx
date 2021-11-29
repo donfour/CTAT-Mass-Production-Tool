@@ -31,13 +31,13 @@ function App() {
 
   return (
     <div className="flex w-screen">
-      <div className="flex-1 h-screen overflow-y-auto p-8 border-r-2">
+      <div className="flex-1 h-screen overflow-y-auto border-r-2">
         <TutorInterface
           html={html} onHtmlUpload={onHtmlUpload}
           css={css} onCssUpload={onCssUpload}
         />
       </div>
-      <div className="flex-1 h-screen overflow-y-auto p-8">
+      <div className="flex-1 h-screen overflow-y-auto">
         <Editor brd={brd} onBrdUpload={onBrdUpload} />
       </div>
     </div>
