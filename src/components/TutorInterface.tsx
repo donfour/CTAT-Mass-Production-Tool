@@ -18,6 +18,9 @@ function stitchHtmlAndCss(html: string, css: string) {
         border: 2px solid blue;
       }
     </style>
+    <script>
+        CTATConfiguration.set('question_file', origin + '/dummy.brd');
+    </script>
     </head>
     ${rest}`;
 }
@@ -39,7 +42,7 @@ function TutorInterface (props: TutorInterfaceProps) {
           <iframe
             id="tutor"
             title="tutor interface"
-            sandbox="allow-same-origin"
+            sandbox="allow-same-origin allow-scripts"
             className="h-full w-full"
             src={getBlobURL(stitchHtmlAndCss(html, css), 'text/html')}
           />
