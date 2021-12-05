@@ -25,12 +25,12 @@ function stitchHtmlAndCss(html: string, css: string) {
     ${rest}`;
 }
 
-function getBlobURL(code: string , type: string) {
-  const blob = new Blob([code], { type })
-  return URL.createObjectURL(blob)
+function getBlobURL(code: string, type: string) {
+  const blob = new Blob([code], {type});
+  return URL.createObjectURL(blob);
 }
 
-function TutorInterface (props: TutorInterfaceProps) {
+function TutorInterface(props: TutorInterfaceProps) {
   const {
     html, onHtmlUpload,
     css, onCssUpload
@@ -49,9 +49,9 @@ function TutorInterface (props: TutorInterfaceProps) {
         ) : (
           <>
             <p>Upload HTML:</p>
-            <input type="file" name="file" onChange={onHtmlUpload} />
+            <input type="file" name="file" onChange={onHtmlUpload}/>
             <p>Upload CSS:</p>
-            <input type="file" name="file" onChange={onCssUpload} />
+            <input type="file" name="file" onChange={onCssUpload}/>
           </>
         )
       }

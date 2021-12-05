@@ -38,7 +38,7 @@ function App() {
         />
       </div>
       <div className="flex-1 h-screen overflow-y-auto">
-        <Editor brd={brd} onBrdUpload={onBrdUpload} />
+        <Editor brd={brd} onBrdUpload={onBrdUpload}/>
       </div>
     </div>
   );
