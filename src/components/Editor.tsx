@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useMemo} from "react";
+import React, {ChangeEvent, useCallback, useMemo, useState} from "react";
 import {Brd} from "../types";
 import TableRow from "./TableRow";
 
@@ -7,12 +7,16 @@ interface EditorProps {
   onBrdUpload: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
+interface Cell {
+  input?: string;
+  buggyMessage?: string;
+  hints: string[];
+}
+
 export interface Row {
   id: string;
-  input?: string;
   selection?: string;
-  buggyMessage?: string;
-  hints?: string[];
+  cells: Cell[];
 }
 
 function onMouseEnter(id?: string) {
@@ -34,49 +38,81 @@ function onMouseLeave(id?: string) {
 function Editor(props: EditorProps) {
   const {brd, onBrdUpload} = props;
 
-  const rows: Row[] = useMemo(() => {
+  const [questions, setQuestions] = useState<Cell[][]>();
+
+  const initialRows: Row[] = useMemo(() => {
     return brd ? (
-      brd.stateGraph.edge.map(edge => {
-        const properties = edge.actionLabel.message.properties;
-        const {buggyMessage, hintMessage} = edge.actionLabel || {};
-        return {
-          id: edge.actionLabel.uniqueID,
-          input: properties.Input.value,
-          selection: properties.Selection.value,
-          buggyMessage,
-          hints: typeof hintMessage === "string" ? [hintMessage] : hintMessage,
-        };
-      })
+      brd.stateGraph.edge
+        .filter(edge => edge.actionLabel.message.properties.Input.value !== "No_Value")
+        .map(edge => {
+          const properties = edge.actionLabel.message.properties;
+          const {buggyMessage, hintMessage} = edge.actionLabel || {};
+
+          return {
+            id: edge.actionLabel.uniqueID,
+            selection: properties.Selection.value,
+            cells: [{
+              input: properties.Input.value,
+              buggyMessage,
+              hints: typeof hintMessage === "string" ? [hintMessage] : !hintMessage ? [] : hintMessage,
+            }]
+          };
+        })
     ) : [];
   }, [brd]);
+
+  const rows: Row[] = initialRows.map((initialRow, index) => {
+    return {
+      id: initialRow.id,
+      cells: [...initialRow.cells, ...(questions || []).map(question => question[index])],
+    }
+  });
+
+  const addNewQuestion = useCallback(() => {
+    setQuestions(existingQuestions => {
+      return [
+        ...(existingQuestions || []),
+        // new question has same values as imported question by default
+        initialRows.map(initialRow => initialRow.cells[0]),
+      ];
+    });
+  }, [initialRows]);
 
   return (
     <>
       {
         brd ? (
-          <table>
-            <thead>
-            <tr>
-              <th>Expand</th>
-              <th>Type</th>
-              <th>Imported Value</th>
-            </tr>
-            </thead>
-            <tbody>
-            {
-              rows
-                .filter(row => row.input !== "No_Value")
-                .map(row =>
-                  <TableRow
-                    key={row.id}
-                    data={row}
-                    onMouseEnter={() => onMouseEnter(row.selection)}
-                    onMouseLeave={() => onMouseLeave(row.selection)}
-                  />
-                )
-            }
-            </tbody>
-          </table>
+          <>
+            <table>
+              <thead>
+              <tr>
+                <th>Expand</th>
+                <th>Type</th>
+                <th>Imported Value</th>
+                {
+                  questions && questions.map((_, index) => {
+                    return <th key={`question-${index}`}>Question {index + 2}</th>;
+                  })
+                }
+              </tr>
+              </thead>
+              <tbody>
+              {
+                rows.map(row => {
+                  return (
+                    <TableRow
+                      key={row.id}
+                      data={row}
+                      onMouseEnter={() => onMouseEnter(row.selection)}
+                      onMouseLeave={() => onMouseLeave(row.selection)}
+                    />
+                  )
+                })
+              }
+              </tbody>
+            </table>
+            <button onClick={addNewQuestion}>+ Add Question</button>
+          </>
         ) : (
           <>
             <input type="file" name="file" onChange={onBrdUpload}/>

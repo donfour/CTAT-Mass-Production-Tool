@@ -9,8 +9,7 @@ interface TableRowProps {
 
 function TableRow(props: TableRowProps) {
   //TODO: see if there's better way than passing callbacks to all rows?
-  const {data, ...callbacks} = props;
-  const {input, buggyMessage, hints} = data;
+  const {data: {cells}, ...callbacks} = props;
 
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleIsExpanded = useCallback(() => setIsExpanded(isExpanded => !isExpanded), []);
@@ -22,7 +21,7 @@ function TableRow(props: TableRowProps) {
           <button onClick={toggleIsExpanded}>Expand</button>
         </td>
         <td>Input</td>
-        <td>{input}</td>
+        {cells.map((cell, index) => <td key={`${index}-${cell.input}`}>{cell.input}</td>)}
       </tr>
       {
         isExpanded && (
@@ -30,14 +29,14 @@ function TableRow(props: TableRowProps) {
             <tr {...callbacks}>
               <td></td>
               <td>Buggy Message</td>
-              <td>{buggyMessage}</td>
+              {cells.map((cell, index) => <td key={`${index}-${cell.buggyMessage}`}>{cell.buggyMessage}</td>)}
             </tr>
             {
-              hints?.map((hint: string, index: number) => (
-                <tr key={`${index}-${hint}`} {...callbacks}>
+              cells[0].hints?.map((_: string, hintLevel: number) => (
+                <tr key={hintLevel} {...callbacks}>
                   <td></td>
-                  <td>Hint {index}</td>
-                  <td>{hint}</td>
+                  <td>Hint {hintLevel}</td>
+                  {cells.map((cell, index) => <td key={`${index}-${cell.hints[hintLevel]}`}>{cell.hints[hintLevel]}</td>)}
                 </tr>
               ))
             }
