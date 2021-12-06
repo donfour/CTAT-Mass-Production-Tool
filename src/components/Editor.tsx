@@ -7,7 +7,7 @@ interface EditorProps {
   onBrdUpload: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-interface Cell {
+export interface Cell {
   input?: string;
   buggyMessage?: string;
   hints: string[];
@@ -78,6 +78,15 @@ function Editor(props: EditorProps) {
     });
   }, [initialRows]);
 
+  const editCell = useCallback((questionIndex: number, rowIndex: number, newCell: Cell) => {
+    setQuestions(existingQuestions => {
+      const newQuestions = [...(existingQuestions || [])];
+      // questions does not contain imported question
+      newQuestions[questionIndex-1][rowIndex] = newCell;
+      return newQuestions;
+    });
+  }, []);
+
   return (
     <>
       {
@@ -98,11 +107,12 @@ function Editor(props: EditorProps) {
               </thead>
               <tbody>
               {
-                rows.map(row => {
+                rows.map((row, rowIndex) => {
                   return (
                     <TableRow
                       key={row.id}
                       data={row}
+                      editCell={(questionIndex, newCell) => editCell(questionIndex, rowIndex, newCell)}
                       onMouseEnter={() => onMouseEnter(row.selection)}
                       onMouseLeave={() => onMouseLeave(row.selection)}
                     />
