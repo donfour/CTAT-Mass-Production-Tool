@@ -1,6 +1,12 @@
 import React, {ChangeEvent, useCallback, useMemo, useState} from "react";
 import {Brd} from "../types";
 import TableRow from "./TableRow";
+import X2JS from 'x2js';
+import {saveAs} from 'file-saver';
+import JSZip from "jszip";
+
+const zip = new JSZip();
+const x2js = new X2JS({selfClosingElements: false});
 
 interface EditorProps {
   brd?: Brd;
@@ -38,21 +44,23 @@ function onMouseLeave(id?: string) {
 function Editor(props: EditorProps) {
   const {brd, onBrdUpload} = props;
 
-  const [questions, setQuestions] = useState<Cell[][]>();
+  const [questions, setQuestions] = useState<Cell[][]>([]);
 
   const initialRows: Row[] = useMemo(() => {
     return brd ? (
       brd.stateGraph.edge
         .filter(edge => edge.actionLabel.message.properties.Input.value !== "No_Value")
+        // currently no support for formulas (i.e. ExpressionMatcher)
+        .filter(edge => edge.actionLabel.matchers.Input.matcher.matcherType === "ExactMatcher")
         .map(edge => {
-          const properties = edge.actionLabel.message.properties;
+          const matchers = edge.actionLabel.matchers;
           const {buggyMessage, hintMessage} = edge.actionLabel || {};
 
           return {
             id: edge.actionLabel.uniqueID,
-            selection: properties.Selection.value,
+            selection: matchers.Selection.matcher.matcherParameter.__text,
             cells: [{
-              input: properties.Input.value,
+              input: matchers.Input.matcher.matcherParameter.__text,
               buggyMessage,
               hints: typeof hintMessage === "string" ? [hintMessage] : !hintMessage ? [] : hintMessage,
             }]
@@ -63,8 +71,8 @@ function Editor(props: EditorProps) {
 
   const rows: Row[] = initialRows.map((initialRow, index) => {
     return {
-      id: initialRow.id,
-      cells: [...initialRow.cells, ...(questions || []).map(question => question[index])],
+      ...initialRow,
+      cells: [...initialRow.cells, ...(questions || []).map(question => question[index])], // TODO: get rid of question?
     }
   });
 
@@ -82,10 +90,43 @@ function Editor(props: EditorProps) {
     setQuestions(existingQuestions => {
       const newQuestions = [...(existingQuestions || [])];
       // questions does not contain imported question
-      newQuestions[questionIndex-1][rowIndex] = newCell;
+      newQuestions[questionIndex - 1][rowIndex] = newCell;
       return newQuestions;
     });
   }, []);
+
+  const generateBrdForQuestion = useCallback((questionIndex: number): Brd => {
+    const document: Brd = JSON.parse(JSON.stringify(brd));
+    rows.forEach(row => {
+      const uniqueID = row.id;
+      const cell = row.cells[questionIndex];
+      const edge = document.stateGraph.edge.find((edge) => edge.actionLabel.uniqueID === uniqueID);
+
+      if (!edge) return;
+
+      //@ts-ignore
+      edge.actionLabel.message.properties.Input.value = cell.input;
+      //@ts-ignore
+      edge.actionLabel.matchers.Input.matcher.matcherParameter.__text = cell.input;
+      //@ts-ignore
+      edge.actionLabel.buggyMessage = cell.buggyMessage;
+      //@ts-ignore
+      edge.actionLabel.hintMessage = cell.hints;
+    })
+    return document;
+  }, [brd, rows])
+
+  const onExportBrds = useCallback(() => {
+    for (let questionIndex = 1; questionIndex < rows[0].cells.length; questionIndex++) {
+      const brd = generateBrdForQuestion(questionIndex);
+      const xml = x2js.js2xml(brd);
+      zip.file(`problem${questionIndex + 1}.brd`, xml);
+    }
+
+    zip.generateAsync({type: "blob"}).then(function (content) {
+      saveAs(content, "example.zip");
+    });
+  }, [rows, generateBrdForQuestion]);
 
   return (
     <>
@@ -122,6 +163,7 @@ function Editor(props: EditorProps) {
               </tbody>
             </table>
             <button onClick={addNewQuestion}>+ Add Question</button>
+            <button onClick={onExportBrds}>Export</button>
           </>
         ) : (
           <>

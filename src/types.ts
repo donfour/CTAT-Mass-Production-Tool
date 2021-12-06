@@ -14,6 +14,7 @@ interface ActionLabel {
   buggyMessage: string;
   hintMessage: string | string[];
   message: Message;
+  matchers: Matchers;
 }
 
 interface Message {
@@ -26,4 +27,24 @@ interface Message {
 
 interface Property {
   value: string;
+}
+
+interface Matchers {
+  Selection: {
+    matcher: Matcher;
+  }
+  Action: {
+    matcher: Matcher;
+  },
+  Input: {
+    matcher: Matcher;
+  },
+}
+
+interface Matcher {
+  matcherType: string;
+  matcherParameter: {
+    _name: string;
+    __text: string;
+  }
 }
