@@ -2,6 +2,9 @@ import React, {useCallback, useState} from "react";
 import {Cell, Row} from "./Editor";
 import EditableCell from "./EditableCell";
 
+import caretIcon from "../../assets/caret-down-icon.svg";
+import {EXPAND_CELL_STYLES, IMPORTED_VALUE_CELL_STYLES, TYPE_CELL_STYLES} from "./Cells";
+
 interface TableRowProps {
   data: Row;
   editCell: (questionIndex: number, newCell: Cell) => void;
@@ -19,14 +22,16 @@ function TableRow(props: TableRowProps) {
   return (
     <>
       {/* input row */}
-      <tr {...callbacks}>
-        <td>
-          <button onClick={toggleIsExpanded}>Expand</button>
+      <tr className="h-12 bg-gray-100" {...callbacks}>
+        <td className={EXPAND_CELL_STYLES}>
+          <button onClick={toggleIsExpanded}>
+            <img className={`transform ${isExpanded ? "" : "-rotate-90"} h-4 w-4`} src={caretIcon} alt="A caret icon"/>
+          </button>
         </td>
-        <td>Input</td>
+        <td className={TYPE_CELL_STYLES}>Input</td>
         {
           cells.map((cell, questionIndex) => (
-            <td key={`${questionIndex}-${cell.input}`}>
+            <td className={IMPORTED_VALUE_CELL_STYLES} key={`${questionIndex}-${cell.input}`}>
               {
                 questionIndex === 0 ? cell.input : (
                   <EditableCell
@@ -50,7 +55,7 @@ function TableRow(props: TableRowProps) {
             {/* buggy message row */}
             <tr {...callbacks}>
               <td></td>
-              <td>Buggy Message</td>
+              <td className={TYPE_CELL_STYLES}>Buggy Message</td>
               {
                 cells.map((cell, questionIndex) => (
                   <td key={`${questionIndex}-${cell.buggyMessage}`}>
@@ -76,7 +81,7 @@ function TableRow(props: TableRowProps) {
               cells[0].hints?.map((_: string, hintLevel: number) => (
                 <tr key={hintLevel} {...callbacks}>
                   <td></td>
-                  <td>Hint {hintLevel}</td>
+                  <td className={TYPE_CELL_STYLES}>Hint {hintLevel}</td>
                   {
                     cells.map((cell, questionIndex) => (
                       <td key={`${questionIndex}-${cell.hints[hintLevel]}`}>

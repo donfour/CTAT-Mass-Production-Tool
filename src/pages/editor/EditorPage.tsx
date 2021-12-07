@@ -12,19 +12,19 @@ interface EditorPageProps {
 function EditorPage(props: EditorPageProps) {
   const {brd, html, css} = props;
   return (
-    <>
-      <header className="p-2 bg-gray-800 text-white">
+    <div className="h-screen flex flex-col flex-initial">
+      <div className="p-2 bg-gray-800 text-white">
         CTAT Mass Production Tool
-      </header>
-      <div className="flex w-screen h-full">
-        <div className="flex-1 h-screen overflow-y-auto border-r-2">
+      </div>
+      <div className="flex-auto flex">
+        <div className="h-full w-half-screen">
           <TutorInterface html={html} css={css}/>
         </div>
-        <div className="flex-1 h-screen overflow-y-auto">
+        <div className="h-full w-half-screen">
           <Editor brd={brd}/>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

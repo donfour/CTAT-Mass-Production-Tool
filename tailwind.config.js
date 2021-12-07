@@ -8,7 +8,8 @@ module.exports = {
         "primary-light": "#A6CFFF"
       },
       width: {
-        "32rem": "32rem"
+        "32rem": "32rem",
+        "half-screen": "50vw"
       }
     },
   },

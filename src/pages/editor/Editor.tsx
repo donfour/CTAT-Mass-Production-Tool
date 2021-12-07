@@ -1,10 +1,11 @@
-import React, {ChangeEvent, useCallback, useMemo, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {Brd} from "../../types";
 import TableRow from "./TableRow";
 import X2JS from 'x2js';
 import {saveAs} from 'file-saver';
 import JSZip from "jszip";
 import Button from "../../components/Button";
+import {IMPORTED_VALUE_CELL_STYLES, TYPE_CELL_STYLES} from "./Cells";
 
 const zip = new JSZip();
 const x2js = new X2JS({selfClosingElements: false});
@@ -128,42 +129,43 @@ function Editor(props: EditorProps) {
   }, [rows, generateBrdForQuestion]);
 
   return brd ? (
-    <>
-      <table>
-        <thead>
-        <tr>
-          <th>Expand</th>
-          <th>Type</th>
-          <th>Imported Value</th>
+    <div className="flex flex-col">
+      <div className="overflow-scroll">
+        <table className="table-fixed">
+          <thead className="bg-gray-300">
+          <tr>
+            <th>{/* TODO: implement expand/collapse all */}</th>
+            <th className={TYPE_CELL_STYLES}>Type</th>
+            <th className={IMPORTED_VALUE_CELL_STYLES}>Imported Value</th>
+            {
+              questions && questions.map((_, index) => {
+                return <th key={`question-${index}`}>Question {index + 2}</th>;
+              })
+            }
+          </tr>
+          </thead>
+          <tbody>
           {
-            questions && questions.map((_, index) => {
-              return <th key={`question-${index}`}>Question {index + 2}</th>;
+            rows.map((row, rowIndex) => {
+              return (
+                <TableRow
+                  key={row.id}
+                  data={row}
+                  editCell={(questionIndex, newCell) => editCell(questionIndex, rowIndex, newCell)}
+                  onMouseEnter={() => onMouseEnter(row.selection)}
+                  onMouseLeave={() => onMouseLeave(row.selection)}
+                />
+              )
             })
           }
-        </tr>
-        </thead>
-        <tbody>
-        {
-          rows.map((row, rowIndex) => {
-            return (
-              <TableRow
-                key={row.id}
-                data={row}
-                editCell={(questionIndex, newCell) => editCell(questionIndex, rowIndex, newCell)}
-                onMouseEnter={() => onMouseEnter(row.selection)}
-                onMouseLeave={() => onMouseLeave(row.selection)}
-              />
-            )
-          })
-        }
-        </tbody>
-      </table>
-
-      <div className="flex justify-between">
+          </tbody>
+        </table>
+      </div>
+      <footer className="flex justify-between p-4">
         <Button onClick={addNewQuestion}>+ Add Question</Button>
         <Button onClick={onExportBrds}>Export</Button>
-      </div>
-    </>
+      </footer>
+    </div>
   ) : null;
 }
 
