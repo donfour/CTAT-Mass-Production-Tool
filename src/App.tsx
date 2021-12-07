@@ -45,7 +45,15 @@ function App() {
       </div>
     </div>
   ) : (
-    <LandingPage/>
+    <LandingPage
+      brd={brd}
+      html={html}
+      css={css}
+      onBrdUpload={onBrdUpload}
+      onHtmlUpload={onHtmlUpload}
+      onCssUpload={onCssUpload}
+      onEditorLaunch={() => setIsEditorLaunched(true)}
+    />
   );
 }
 

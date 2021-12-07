@@ -5,6 +5,10 @@ module.exports = {
     extend: {
       colors: {
         primary: "#2288FF",
+        "primary-light": "#A6CFFF"
+      },
+      width: {
+        "32rem": "32rem"
       }
     },
   },

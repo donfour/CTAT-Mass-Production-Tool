@@ -13,7 +13,7 @@ function stitchHtmlAndCss(html: string, css: string) {
   return `
     ${head}
     <style>
-      ${css}
+      ${css || ""}
       .active {
         border: 2px solid blue;
       }
