@@ -7,7 +7,9 @@ import brdIconSmall from "../../assets/brd-icon-small.png";
 import cssIconSmall from "../../assets/css-icon-small.png";
 import checkIcon from "../../assets/check-icon.svg";
 import {Brd} from "../../types";
+
 import UploadButton from "./UploadButton";
+import Button from "../../components/Button";
 
 interface LandingPageProps {
   brd?: Brd;
@@ -112,7 +114,7 @@ function LandingPage(props: LandingPageProps) {
             }
           </div>
         </div>
-        <button onClick={onEditorLaunch} disabled={!isTutorReady} className={`${isTutorReady ? "bg-primary" : "bg-primary-light"} text-white rounded-sm px-6 py-1 filter drop-shadow-md`}>Launch</button>
+        <Button onClick={onEditorLaunch} disabled={!isTutorReady}>Launch</Button>
       </div>
     </div>
   );

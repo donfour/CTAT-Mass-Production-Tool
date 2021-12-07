@@ -1,11 +1,8 @@
-import React, {ChangeEvent} from "react";
+import React from "react";
 
 interface TutorInterfaceProps {
   html?: string;
-  onHtmlUpload: (event: ChangeEvent<HTMLInputElement>) => void;
-
   css?: string;
-  onCssUpload: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 function stitchHtmlAndCss(html: string, css: string) {
@@ -31,32 +28,16 @@ function getBlobURL(code: string, type: string) {
 }
 
 function TutorInterface(props: TutorInterfaceProps) {
-  const {
-    html, onHtmlUpload,
-    css, onCssUpload
-  } = props;
-  return (
-    <>
-      {
-        css && html ? (
-          <iframe
-            id="tutor"
-            title="tutor interface"
-            sandbox="allow-same-origin allow-scripts"
-            className="h-full w-full"
-            src={getBlobURL(stitchHtmlAndCss(html, css), 'text/html')}
-          />
-        ) : (
-          <>
-            <p>Upload HTML:</p>
-            <input type="file" name="file" onChange={onHtmlUpload}/>
-            <p>Upload CSS:</p>
-            <input type="file" name="file" onChange={onCssUpload}/>
-          </>
-        )
-      }
-    </>
-  )
+  const {html, css} = props;
+  return html && css ? (
+    <iframe
+      id="tutor"
+      title="tutor interface"
+      sandbox="allow-same-origin allow-scripts"
+      className="h-full w-full"
+      src={getBlobURL(stitchHtmlAndCss(html, css), 'text/html')}
+    />
+  ) : null;
 }
 
 export default TutorInterface;

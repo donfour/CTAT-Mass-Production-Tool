@@ -1,9 +1,8 @@
 import React, {useCallback, useState} from 'react';
 import X2JS from 'x2js';
 import {Brd} from "./types";
-import Editor from "./pages/editor/Editor";
-import TutorInterface from "./pages/editor/TutorInterface";
 import LandingPage from "./pages/landing/LandingPage";
+import EditorPage from "./pages/editor/EditorPage";
 
 const x2js = new X2JS();
 
@@ -33,17 +32,11 @@ function App() {
   }, []);
 
   return isEditorLaunched ? (
-    <div className="flex w-screen">
-      <div className="flex-1 h-screen overflow-y-auto border-r-2">
-        <TutorInterface
-          html={html} onHtmlUpload={onHtmlUpload}
-          css={css} onCssUpload={onCssUpload}
-        />
-      </div>
-      <div className="flex-1 h-screen overflow-y-auto">
-        <Editor brd={brd} onBrdUpload={onBrdUpload}/>
-      </div>
-    </div>
+    <EditorPage
+      brd={brd}
+      html={html}
+      css={css}
+    />
   ) : (
     <LandingPage
       brd={brd}

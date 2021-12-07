@@ -4,13 +4,13 @@ import TableRow from "./TableRow";
 import X2JS from 'x2js';
 import {saveAs} from 'file-saver';
 import JSZip from "jszip";
+import Button from "../../components/Button";
 
 const zip = new JSZip();
 const x2js = new X2JS({selfClosingElements: false});
 
 interface EditorProps {
   brd?: Brd;
-  onBrdUpload: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export interface Cell {
@@ -42,7 +42,7 @@ function onMouseLeave(id?: string) {
 }
 
 function Editor(props: EditorProps) {
-  const {brd, onBrdUpload} = props;
+  const {brd} = props;
 
   const [questions, setQuestions] = useState<Cell[][]>([]);
 
@@ -122,58 +122,49 @@ function Editor(props: EditorProps) {
       const xml = x2js.js2xml(brd);
       zip.file(`problem${questionIndex + 1}.brd`, xml);
     }
-
     zip.generateAsync({type: "blob"}).then(function (content) {
       saveAs(content, "example.zip");
     });
   }, [rows, generateBrdForQuestion]);
 
-  return (
+  return brd ? (
     <>
-      {
-        brd ? (
-          <>
-            <table>
-              <thead>
-              <tr>
-                <th>Expand</th>
-                <th>Type</th>
-                <th>Imported Value</th>
-                {
-                  questions && questions.map((_, index) => {
-                    return <th key={`question-${index}`}>Question {index + 2}</th>;
-                  })
-                }
-              </tr>
-              </thead>
-              <tbody>
-              {
-                rows.map((row, rowIndex) => {
-                  return (
-                    <TableRow
-                      key={row.id}
-                      data={row}
-                      editCell={(questionIndex, newCell) => editCell(questionIndex, rowIndex, newCell)}
-                      onMouseEnter={() => onMouseEnter(row.selection)}
-                      onMouseLeave={() => onMouseLeave(row.selection)}
-                    />
-                  )
-                })
-              }
-              </tbody>
-            </table>
-            <button onClick={addNewQuestion}>+ Add Question</button>
-            <button onClick={onExportBrds}>Export</button>
-          </>
-        ) : (
-          <>
-            <input type="file" name="file" onChange={onBrdUpload}/>
-            <p>Please select a brd file</p>
-          </>
-        )
-      }
+      <table>
+        <thead>
+        <tr>
+          <th>Expand</th>
+          <th>Type</th>
+          <th>Imported Value</th>
+          {
+            questions && questions.map((_, index) => {
+              return <th key={`question-${index}`}>Question {index + 2}</th>;
+            })
+          }
+        </tr>
+        </thead>
+        <tbody>
+        {
+          rows.map((row, rowIndex) => {
+            return (
+              <TableRow
+                key={row.id}
+                data={row}
+                editCell={(questionIndex, newCell) => editCell(questionIndex, rowIndex, newCell)}
+                onMouseEnter={() => onMouseEnter(row.selection)}
+                onMouseLeave={() => onMouseLeave(row.selection)}
+              />
+            )
+          })
+        }
+        </tbody>
+      </table>
+
+      <div className="flex justify-between">
+        <Button onClick={addNewQuestion}>+ Add Question</Button>
+        <Button onClick={onExportBrds}>Export</Button>
+      </div>
     </>
-  )
+  ) : null;
 }
 
 export default Editor;
