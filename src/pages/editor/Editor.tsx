@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useCallback, useMemo, useState} from "react";
-import {Brd} from "../types";
+import {Brd} from "../../types";
 import TableRow from "./TableRow";
 import X2JS from 'x2js';
 import {saveAs} from 'file-saver';
