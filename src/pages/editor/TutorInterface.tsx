@@ -16,7 +16,7 @@ function stitchHtmlAndCss(html: string, css: string) {
       }
     </style>
     <script>
-        CTATConfiguration.set('question_file', origin + '/dummy.brd');
+        CTATConfiguration.set('question_file', window.location.href + '/dummy.brd');
     </script>
     </head>
     ${rest}`;
