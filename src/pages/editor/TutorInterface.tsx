@@ -16,7 +16,9 @@ function stitchHtmlAndCss(html: string, css: string) {
       }
     </style>
     <script>
-        CTATConfiguration.set('question_file', window.location.href + '/dummy.brd');
+        // A hack to make the page work on Github Pages
+        const url = origin === 'https://donfour.github.io' ? 'https://donfour.github.io/CTAT-Mass-Production-Tool' : origin
+        CTATConfiguration.set('question_file', url + '/dummy.brd');
     </script>
     </head>
     ${rest}`;
