@@ -1,5 +1,6 @@
 {
   "name": "pol_assignment_6",
+  "homepage": "https://donfour.github.io/CTAT-Mass-Production-Tool",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -18,7 +19,9 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -45,6 +48,7 @@
     "@types/react": "^17.0.34",
     "@types/react-dom": "^17.0.11",
     "autoprefixer": "^9",
+    "gh-pages": "^3.2.3",
     "postcss": "^7",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "web-vitals": "^2.1.2"
